@@ -18,16 +18,31 @@ type UserType = {
   followers: number
 }
 
+type SearchPropsType = {
+  value: string
+  onSubmit: (fixedValue: string) => void
+}
+
+const Search = (props: SearchPropsType) => {
+
+  const [tempSearch, setTempsearch] = useState(props.value);
+
+  return (
+    <div>
+      <input placeholder='search' value={tempSearch} onChange={(e) => setTempsearch(e.currentTarget.value)}/>
+      <button onClick={() => {props.onSubmit(tempSearch)}}>find</button>
+    </div>
+
+  )
+}
+
 const Github = () => {
 
 const [selectedUser, setSelectedUser] = useState<SearchUserType | null>(null);
-const [tempSearch, setTempsearch] = useState('it-kamasutra');
+// const [tempSearch, setTempsearch] = useState('dmitrii');
 const [searchTerm, setSearchTerm] = useState('');
 const [users, setUsers] = useState<SearchUserType[]>([]);
 const [userDetails, setUserDetails] = useState<null | UserType>(null);
-// console.log(searchTerm, '-----');
-
-
 
 useEffect(() => {
   console.log('useEffect-1-title');
@@ -54,10 +69,11 @@ useEffect(() => {
   return ( 
     <div className={classes.container}>
     <div>
-      <div>
+      <Search value={''} onSubmit={(value) => setSearchTerm(value)}/>
+      {/* <div>
         <input placeholder='search' value={tempSearch} onChange={(e) => setTempsearch(e.currentTarget.value)}/>
         <button onClick={() => {setSearchTerm(tempSearch)}}>find</button>
-      </div>
+      </div> */}
       <ul>
         { users.map(item => <li key={item.id} className={selectedUser === item ? classes.selected : ""} onClick={() => {setSelectedUser(item); document.title = item}}>{item.login}</li>)}
       </ul>
