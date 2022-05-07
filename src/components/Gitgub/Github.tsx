@@ -1,48 +1,20 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-
 import classes from './github.module.css';
-
+import { Search } from '../Search/Search'
+import { UsersList } from '../UsersList/UsersLIst'
+import { UsersDetails } from '../UsersDetails/UsersDetails'
 
 type SearchUserType = {
   login: string
   id: number
 }
-type SearchResults = {
-  items: SearchUserType
-}
-type UserType = {
-  login: string
-  id: number
-  avatar_url: string
-  followers: number
-}
-
-type SearchPropsType = {
-  value: string
-  onSubmit: (fixedValue: string) => void
-}
-
-const Search = (props: SearchPropsType) => {
-
-  const [tempSearch, setTempsearch] = useState(props.value);
-
-  return (
-    <div>
-      <input placeholder='search' value={tempSearch} onChange={(e) => setTempsearch(e.currentTarget.value)}/>
-      <button onClick={() => {props.onSubmit(tempSearch)}}>find</button>
-    </div>
-
-  )
-}
 
 const Github = () => {
 
+const initialState = 'DoroninDmitrii'  
+
 const [selectedUser, setSelectedUser] = useState<SearchUserType | null>(null);
-// const [tempSearch, setTempsearch] = useState('dmitrii');
-const [searchTerm, setSearchTerm] = useState('');
-const [users, setUsers] = useState<SearchUserType[]>([]);
-const [userDetails, setUserDetails] = useState<null | UserType>(null);
+const [searchTerm, setSearchTerm] = useState(initialState);
 
 useEffect(() => {
   console.log('useEffect-1-title');
@@ -51,43 +23,16 @@ useEffect(() => {
   }
 }, [selectedUser])
 
-useEffect(() => {
-  console.log('useEffect-2-listOfSearch');
-  axios.get<SearchResults>(`https://api.github.com/search/users?q=${searchTerm}`)
-  .then(res => setUsers(res.data.items))
-},[searchTerm])
-
-
-useEffect(() => {
-  console.log('useEffect-3-myProfile');
-  if (selectedUser) {
-    axios.get<UserType>(`https://api.github.com/users/${selectedUser.login}`)
-         .then(res => setUserDetails(res.data))
-  }
-},[selectedUser])
-
   return ( 
     <div className={classes.container}>
     <div>
-      <Search value={''} onSubmit={(value) => setSearchTerm(value)}/>
-      {/* <div>
-        <input placeholder='search' value={tempSearch} onChange={(e) => setTempsearch(e.currentTarget.value)}/>
-        <button onClick={() => {setSearchTerm(tempSearch)}}>find</button>
-      </div> */}
-      <ul>
-        { users.map(item => <li key={item.id} className={selectedUser === item ? classes.selected : ""} onClick={() => {setSelectedUser(item); document.title = item}}>{item.login}</li>)}
-      </ul>
+      <Search value={searchTerm} onSubmit={(value) => setSearchTerm(value)}/>
+      <button onClick={() => setSearchTerm(initialState)}>reset</button>
+
+      <UsersList term={searchTerm} selectedUser={selectedUser} onSubmit={(item) => setSelectedUser(item)}/>
     </div>
-    <div>
-      <h2>UserName</h2>
-      {userDetails ? 
-      <>
-      <div>{userDetails.login}</div>
-      <div>{userDetails.id}</div>
-      <img src={userDetails.avatar_url}/>
-      </>
-       : <div>Details</div>}
-    </div>
+
+    <UsersDetails selectedUser={selectedUser}/>
   </div>
   );
 };
