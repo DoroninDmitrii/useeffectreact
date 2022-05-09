@@ -10,7 +10,7 @@ type SearchUserType = {
 }
 
 const Github = () => {
-
+  
 const initialState = 'DoroninDmitrii'  
 
 const [selectedUser, setSelectedUser] = useState<SearchUserType | null>(null);
