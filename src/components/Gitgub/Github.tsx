@@ -23,7 +23,6 @@ useEffect(() => {
   }
 }, [selectedUser])
 
-
   return ( 
     <div className={classes.container}>
     <div>
